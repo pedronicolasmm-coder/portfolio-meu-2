@@ -48,15 +48,24 @@
     var palavra = tit.firstChild;
     var ajusta = function () {
       tit.style.fontSize = "";
-      var largura = tit.parentNode.clientWidth, atual = palavra.getBoundingClientRect().width;
+      /* as duas medidas pelo mesmo metodo, para a conta nao depender do zoom da pagina */
+      var largura = tit.getBoundingClientRect().width, atual = palavra.getBoundingClientRect().width;
       if (!atual) return;
       var fs = parseFloat(getComputedStyle(tit).fontSize) * (largura / atual) * 0.995;
       tit.style.fontSize = Math.min(fs, 520) + "px";
     };
+    /* com o zoom de 90% do computador, no Chrome/Edge 100svh vira 90% da tela:
+       a capa recebe a altura da tela em px, dividida pelo zoom, para encher a tela em todo navegador */
+    var capaEl = $(".capa");
+    var alturaCapa = function () {
+      var z = parseFloat(getComputedStyle(document.documentElement).zoom) || 1;
+      if (capaEl) capaEl.style.minHeight = z !== 1 ? Math.ceil(window.innerHeight / z) + "px" : "";
+    };
+    alturaCapa();
     ajusta();
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(ajusta);
     var tAj;
-    window.addEventListener("resize", function () { clearTimeout(tAj); tAj = setTimeout(ajusta, 120); });
+    window.addEventListener("resize", function () { clearTimeout(tAj); tAj = setTimeout(function () { alturaCapa(); ajusta(); }, 120); });
   }
 
   /* ---------- 2. leque de artes no cartao ---------- */
@@ -289,7 +298,7 @@
   if (aviso && !avisoFechado) aviso.hidden = false;
   var noContato = false;
   function aoRolar() {
-    var passou = window.scrollY > capa.offsetHeight * 0.7;
+    var r = capa.getBoundingClientRect(), passou = r.bottom < r.height * 0.3; /* rolou 70% da capa */
     barra.classList.toggle("on", passou);
     if (aviso && !aviso.hidden) aviso.classList.toggle("on", passou && !noContato);
   }

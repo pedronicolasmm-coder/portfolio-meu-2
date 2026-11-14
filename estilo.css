@@ -10,6 +10,9 @@
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;scroll-padding-top:72px;-webkit-text-size-adjust:100%}
+/* No computador o site fica em 90%, como o navegador com zoom de 90% (pedido do Pedro).
+   No celular fica em 100%, senao o texto fica pequeno demais. Para mudar, troque o .9 */
+@media(min-width:981px){html{zoom:.9}}
 body{margin:0;background:var(--fundo);color:var(--tinta);font-family:var(--sans);font-size:16px;line-height:1.5;
   -webkit-font-smoothing:antialiased;overflow-x:hidden}
 img{display:block;max-width:100%}
